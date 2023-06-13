@@ -15,7 +15,7 @@ find_package(ament_cmake_ros REQUIRED)
 find_package(rcutils REQUIRED)
 find_package(rosidl_typesupport_interface REQUIRED)
 
-add_library(${PROJECT_NAME}
+add_library(${PROJECT_NAME} STATIC
   "src/message_type_support.c"
   "src/primitives_sequence_functions.c"
   "src/sequence_bound.c"
