@@ -8,7 +8,7 @@ ROSIDL_TYPESUPPORT_INTERFACE_DIR = rosidl_typesupport_interface
 # Pushes the current directory to remote host.
 # ==================================
 
-REMOTE_USER_HOST = "patrick@vm_comp4961_ubuntu2204"
+REMOTE_USER_HOST = "patrick@vm_comp4961_ubuntu1804"
 REMOTE_DEST_DIR = "~/remote/$(shell hostname -s)/"
 
 .PHONY: push-remote
@@ -43,7 +43,12 @@ remote: push-remote
 
 .PHONY: clean
 clean: \
+	clean-rosidl-typesupport-interface \
 	clean-rosidl-runtime-c
+
+.PHONY: clean-rosidl-typesupport-interface
+clean-rosidl-typesupport-interface:
+	$(MAKE) -C $(ROSIDL_TYPESUPPORT_INTERFACE_DIR) clean
 
 .PHONY: clean-rosidl-runtime-c
 clean-rosidl-runtime-c:
@@ -55,7 +60,12 @@ clean-rosidl-runtime-c:
 
 .PHONY: build
 build: \
+	build-rosidl-typesupport-interface \
 	build-rosidl-runtime-c
+
+.PHONY: build-rosidl-typesupport-interface
+build-rosidl-typesupport-interface:
+	$(MAKE) -C $(ROSIDL_TYPESUPPORT_INTERFACE_DIR) build
 
 .PHONY: build-rosidl-runtime-c
 build-rosidl-runtime-c:
