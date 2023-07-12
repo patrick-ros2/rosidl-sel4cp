@@ -1,5 +1,5 @@
 
-# Stubs for ament_cmake.
+# Stubs for ament_cmake_ros.
 
 function(ament_target_dependencies)
 endfunction()
