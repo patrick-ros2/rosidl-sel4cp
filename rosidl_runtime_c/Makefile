@@ -63,6 +63,3 @@ build:
 	cd $(BUILD_DIR) && $(MAKE) -j $(NUM_PROCS)
 	# Install so that we can use the library in other projects.
 	cd $(BUILD_DIR) && $(MAKE) install
-	# Files are installed here:
-	# /usr/local/lib/librcutils.a
-	# /usr/local/include/rcutils
