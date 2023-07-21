@@ -12,15 +12,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#ifndef NO_ASSERT
 #include <assert.h>
+#endif
 #include <stdint.h>
-#include <stdlib.h>
+//#include <stdlib.h>
 #include <string.h>
 
 #include <rcutils/allocator.h>
 
 #include "rosidl_runtime_c/primitives_sequence_functions.h"
 
+#ifndef NO_ASSERT
 #define ROSIDL_GENERATOR_C__DEFINE_PRIMITIVE_SEQUENCE_FUNCTIONS(STRUCT_NAME, TYPE_NAME) \
   bool rosidl_runtime_c__ ## STRUCT_NAME ## __Sequence__init( \
     rosidl_runtime_c__ ## STRUCT_NAME ## __Sequence * sequence, size_t size) \
@@ -102,7 +105,86 @@
     output->size = input->size; \
     return true; \
   }
-
+#else
+#define ROSIDL_GENERATOR_C__DEFINE_PRIMITIVE_SEQUENCE_FUNCTIONS(STRUCT_NAME, TYPE_NAME) \
+  bool rosidl_runtime_c__ ## STRUCT_NAME ## __Sequence__init( \
+    rosidl_runtime_c__ ## STRUCT_NAME ## __Sequence * sequence, size_t size) \
+  { \
+    if (!sequence) { \
+      return false; \
+    } \
+    TYPE_NAME * data = NULL; \
+    if (size) { \
+      rcutils_allocator_t allocator = rcutils_get_default_allocator(); \
+      data = allocator.allocate(sizeof(TYPE_NAME) * size, allocator.state); \
+      if (!data) { \
+        return false; \
+      } \
+    } \
+    sequence->data = data; \
+    sequence->size = size; \
+    sequence->capacity = size; \
+    return true; \
+  } \
+ \
+  void rosidl_runtime_c__ ## STRUCT_NAME ## __Sequence__fini( \
+    rosidl_runtime_c__ ## STRUCT_NAME ## __Sequence * sequence) \
+  { \
+    if (!sequence) { \
+      return; \
+    } \
+    if (sequence->data) { \
+      /* ensure that data and capacity values are consistent */ \
+      rcutils_allocator_t allocator = rcutils_get_default_allocator(); \
+      allocator.deallocate(sequence->data, allocator.state); \
+      sequence->data = NULL; \
+      sequence->size = 0; \
+      sequence->capacity = 0; \
+    } else { \
+      /* ensure that data, size, and capacity values are consistent */ \
+    } \
+  } \
+ \
+  bool rosidl_runtime_c__ ## STRUCT_NAME ## __Sequence__are_equal( \
+    const rosidl_runtime_c__ ## STRUCT_NAME ## __Sequence * lhs, \
+    const rosidl_runtime_c__ ## STRUCT_NAME ## __Sequence * rhs) \
+  { \
+    if (!lhs || !rhs) { \
+      return false; \
+    } \
+    if (lhs->size != rhs->size) { \
+      return false; \
+    } \
+    for (size_t i = 0; i < lhs->size; ++i) { \
+      if (lhs->data[i] != rhs->data[i]) { \
+        return false; \
+      } \
+    } \
+    return true; \
+  } \
+ \
+  bool rosidl_runtime_c__ ## STRUCT_NAME ## __Sequence__copy( \
+    const rosidl_runtime_c__ ## STRUCT_NAME ## __Sequence * input, \
+    rosidl_runtime_c__ ## STRUCT_NAME ## __Sequence * output) \
+  { \
+    if (!input || !output) { \
+      return false; \
+    } \
+    if (output->capacity < input->size) { \
+      rcutils_allocator_t allocator = rcutils_get_default_allocator(); \
+      TYPE_NAME * data = (TYPE_NAME *)allocator.reallocate( \
+        output->data, sizeof(TYPE_NAME) * input->size, allocator.state); \
+      if (!data) { \
+        return false; \
+      } \
+      output->data = data; \
+      output->capacity = input->size; \
+    } \
+    memcpy(output->data, input->data, sizeof(TYPE_NAME) * input->size); \
+    output->size = input->size; \
+    return true; \
+  }
+#endif
 
 // array functions for all basic types
 ROSIDL_GENERATOR_C__DEFINE_PRIMITIVE_SEQUENCE_FUNCTIONS(float, float)
