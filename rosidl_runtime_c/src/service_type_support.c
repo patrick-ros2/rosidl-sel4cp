@@ -14,14 +14,18 @@
 
 #include "rosidl_runtime_c/service_type_support_struct.h"
 
+#ifndef NO_ASSERT
 #include <assert.h>
+#endif
 #include <string.h>
 
 const rosidl_service_type_support_t * get_service_typesupport_handle(
   const rosidl_service_type_support_t * handle, const char * identifier)
 {
+#ifndef NO_ASSERT
   assert(handle);
   assert(handle->func);
+#endif
   rosidl_service_typesupport_handle_function func =
     (rosidl_service_typesupport_handle_function)(handle->func);
   return func(handle, identifier);
@@ -30,9 +34,11 @@ const rosidl_service_type_support_t * get_service_typesupport_handle(
 const rosidl_service_type_support_t * get_service_typesupport_handle_function(
   const rosidl_service_type_support_t * handle, const char * identifier)
 {
+#ifndef NO_ASSERT
   assert(handle);
   assert(handle->typesupport_identifier);
   assert(identifier);
+#endif
   if (strcmp(handle->typesupport_identifier, identifier) == 0) {
     return handle;
   }

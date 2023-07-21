@@ -17,6 +17,12 @@ find_package(rosidl_typesupport_interface REQUIRED)
 
 option(NO_ASSERT "Flag for building without assert." OFF)
 option(NO_STDIO "Flag for building without stdio." OFF)
+if (NO_ASSERT)
+  add_compile_definitions(NO_ASSERT)
+endif()
+if (NO_STDIO)
+  add_compile_definitions(NO_STDIO)
+endif()
 
 add_library(${PROJECT_NAME} STATIC
   "src/message_type_support.c"

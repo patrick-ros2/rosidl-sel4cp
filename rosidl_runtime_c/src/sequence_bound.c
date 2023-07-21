@@ -14,14 +14,18 @@
 
 #include "rosidl_runtime_c/sequence_bound.h"
 
+#ifndef NO_ASSERT
 #include <assert.h>
+#endif
 #include <string.h>
 
 const rosidl_runtime_c__Sequence__bound * get_sequence_bound_handle(
   const rosidl_runtime_c__Sequence__bound * handle, const char * identifier)
 {
+#ifndef NO_ASSERT
   assert(handle);
   assert(handle->func);
+#endif
   rosidl_runtime_c__bound_handle_function func =
     (rosidl_runtime_c__bound_handle_function)(handle->func);
   return func(handle, identifier);
@@ -30,9 +34,11 @@ const rosidl_runtime_c__Sequence__bound * get_sequence_bound_handle(
 const rosidl_runtime_c__Sequence__bound * get_sequence_bound_handle_function(
   const rosidl_runtime_c__Sequence__bound * handle, const char * identifier)
 {
+#ifndef NO_ASSERT
   assert(handle);
   assert(handle->typesupport_identifier);
   assert(identifier);
+#endif
   if (strcmp(handle->typesupport_identifier, identifier) == 0) {
     return handle;
   }

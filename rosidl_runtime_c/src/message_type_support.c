@@ -14,15 +14,19 @@
 
 #include "rosidl_runtime_c/message_type_support_struct.h"
 
+#ifndef NO_ASSERT
 #include <assert.h>
-#include <stdio.h>
+#endif
+//#include <stdio.h>
 #include <string.h>
 
 const rosidl_message_type_support_t * get_message_typesupport_handle(
   const rosidl_message_type_support_t * handle, const char * identifier)
 {
+#ifndef NO_ASSERT
   assert(handle);
   assert(handle->func);
+#endif
   rosidl_message_typesupport_handle_function func =
     (rosidl_message_typesupport_handle_function)(handle->func);
   return func(handle, identifier);
@@ -31,9 +35,11 @@ const rosidl_message_type_support_t * get_message_typesupport_handle(
 const rosidl_message_type_support_t * get_message_typesupport_handle_function(
   const rosidl_message_type_support_t * handle, const char * identifier)
 {
+#ifndef NO_ASSERT
   assert(handle);
   assert(handle->typesupport_identifier);
   assert(identifier);
+#endif
   if (strcmp(handle->typesupport_identifier, identifier) == 0) {
     return handle;
   }
