@@ -14,10 +14,14 @@
 
 #include "rosidl_runtime_c/string_functions.h"
 
+#ifndef NO_ASSERT
 #include <assert.h>
-#include <stdlib.h>
+#endif
+//#include <stdlib.h>
 #include <string.h>
+#ifndef NO_STDIO
 #include <stdio.h>
+#endif
 
 #include <rcutils/allocator.h>
 #include "rcutils/macros.h"
@@ -50,10 +54,14 @@ rosidl_runtime_c__String__fini(rosidl_runtime_c__String * str)
   if (str->data) {
     /* ensure that data and capacity values are consistent */
     if (str->capacity <= 0) {
+#ifndef NO_STDIO
       fprintf(
         stderr, "Unexpected condition: string capacity was zero for allocated data! "
         "Exiting.\n");
       exit(-1);
+#else
+      return;
+#endif
     }
     rcutils_allocator_t allocator = rcutils_get_default_allocator();
     allocator.deallocate(str->data, allocator.state);
@@ -63,16 +71,24 @@ rosidl_runtime_c__String__fini(rosidl_runtime_c__String * str)
   } else {
     /* ensure that data, size, and capacity values are consistent */
     if (0 != str->size) {
+#ifndef NO_STDIO
       fprintf(
         stderr, "Unexpected condition: string size was non-zero for deallocated data! "
         "Exiting.\n");
       exit(-1);
+#else
+      return;
+#endif
     }
     if (0 != str->capacity) {
+#ifndef NO_STDIO
       fprintf(
         stderr, "Unexpected behavior: string capacity was non-zero for deallocated data! "
         "Exiting.\n");
       exit(-1);
+#else
+        return;
+#endif
     }
   }
 }
@@ -187,7 +203,9 @@ rosidl_runtime_c__String__Sequence__fini(
   }
   if (sequence->data) {
     // ensure that data and capacity values are consistent
+#ifndef NO_ASSERT
     assert(sequence->capacity > 0);
+#endif
     // finalize all sequence elements
     for (size_t i = 0; i < sequence->capacity; ++i) {
       rosidl_runtime_c__String__fini(&sequence->data[i]);
@@ -199,8 +217,10 @@ rosidl_runtime_c__String__Sequence__fini(
     sequence->capacity = 0;
   } else {
     // ensure that data, size, and capacity values are consistent
+#ifndef NO_ASSERT
     assert(0 == sequence->size);
     assert(0 == sequence->capacity);
+#endif
   }
 }
 

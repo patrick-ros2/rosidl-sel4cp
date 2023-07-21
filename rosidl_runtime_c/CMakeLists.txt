@@ -15,6 +15,9 @@ find_package(ament_cmake_ros REQUIRED)
 find_package(rcutils REQUIRED)
 find_package(rosidl_typesupport_interface REQUIRED)
 
+option(NO_ASSERT "Flag for building without assert." OFF)
+option(NO_STDIO "Flag for building without stdio." OFF)
+
 add_library(${PROJECT_NAME} STATIC
   "src/message_type_support.c"
   "src/primitives_sequence_functions.c"
